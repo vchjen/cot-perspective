@@ -133,7 +133,7 @@ const DataTable: FC<DataTableProps> = (props) => {
             </td>
             <td key="change_longs">
               <span style={{ display: 'block' }}>{Number.isNaN(row.change_longs) ? 'Not Available' : row.change_longs.toLocaleString()}</span>
-              <span>STD. {Number.isNaN(row.change_longs_std) ? 'Not Available' : `${row.change_longs_std}`}</span>
+              <span style={{ fontSize: '80%' }}>STD. {Number.isNaN(row.change_longs_std) ? 'Not Available' : `${row.change_longs_std}`}</span>
             </td>
             <td key="change_shorts">
               <span style={{ display: 'block' }}>{Number.isNaN(row.change_shorts) ? 'Not Available' : row.change_shorts.toLocaleString()}</span>

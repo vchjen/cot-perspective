@@ -51,7 +51,7 @@ export const useGetData: Use<GetData> = (resolve) => {
       const previousYearData = await getData({ ...config, year })
       for (const exchange in data) {
         for (const market in data[exchange]) {
-          const previousData = previousYearData[exchange][market]
+          const previousData = previousYearData[exchange]?.[market]
           if (previousData === undefined) continue
           data[exchange][market].push(...previousData)
         }

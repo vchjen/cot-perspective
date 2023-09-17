@@ -1,6 +1,19 @@
 import React, { createContext, FC } from 'react'
 import { useGetAverage } from '../util/get-average'
 import { useResolve } from '../util/use-resolve'
+import {
+  LineChart,
+  Line,
+  CartesianGrid,
+  XAxis,
+  YAxis,
+  Tooltip,
+  Legend,
+  ReferenceLine,
+  Bar,
+  Scatter,
+  ComposedChart, ScatterChart, ResponsiveContainer, ZAxis, BarChart
+} from 'recharts'
 
 type TableValues = Array<(string | number)>
 
@@ -28,8 +41,8 @@ const DataTable: FC<DataTableProps> = (props) => {
   const netAverage = averageStats.average.toLocaleString()
   const longSentimentStats = stats(8)
   const shortSentimentStats = stats(9)
-  // const longAvgPosStats = stats(11)
-  // const shortAvgPosStats = stats(12)
+  const longAvgPosStats = stats(11)
+  const shortAvgPosStats = stats(12)
 
   const propsMapped = props.values
     .map((x, idx) => ({
@@ -83,14 +96,37 @@ const DataTable: FC<DataTableProps> = (props) => {
       return y
     })
 
-  // const mappedTableData = props.values.map(row => ({
-  //   xvs: row.
-  // }));
+  const sentimentData = propsMapped.slice(0, 12).reverse().map((p, idx) => ({
+    primary: String(p.date).substring(5),
+    short_sentiment_z_index: Number(p.short_sentiment_z_index),
+    long_sentiment_z_index: Number(p.long_sentiment_z_index),
+    longs: p.long_sentiment,
+    shorts: p.short_sentiment,
+  }))
+  const netPositionsData = propsMapped.slice(0, 12).reverse().map((p, idx) => ({
+    primary: String(p.date).substring(5),
+    net_positions: Number(p.net_pos_z_index),
+  }))
+  const avgPositionsData = propsMapped.slice(0, 12).reverse().map((p, idx) => ({
+    primary: String(p.date).substring(5),
+    shorts: Number(p.avg_short_pos),
+    longs: Number(p.avg_long_pos),
+    short_avg_z_index: Math.round(100 * ((Number(p.avg_short_pos) - shortAvgPosStats.min) / (shortAvgPosStats.max - shortAvgPosStats.min))),
+    long_avg_z_index: Math.round(100 * ((Number(p.avg_long_pos) - longAvgPosStats.min) / (longAvgPosStats.max - longAvgPosStats.min))),
+  }))
+  const changeInOpenInterest = propsMapped.slice(0, 12).reverse().map((p, idx) => ({
+    primary: String(p.date).substring(5),
+    longs: p.change_longs,
+    shorts: p.change_shorts,
+    change_longs_std: 100 * Number(p.change_longs_std),
+    change_shorts_std: 100 * Number(p.change_shorts_std),
+  }))
 
   return (
-    <table
-      className="table table-bordered text-center"
-      style={{ marginTop: 10 }}>
+    <>
+      <table
+        className="table table-bordered text-center"
+        style={{ marginTop: 10 }}>
       <thead className="thead-dark">
         <tr>
           <th scope="col">DATE</th>
@@ -161,6 +197,126 @@ const DataTable: FC<DataTableProps> = (props) => {
         ))}
       </tbody>
     </table>
+
+      <header className='blog-header py-4'>
+        <div className='row flex-nowrap justify-content-between align-items-center'>
+          <div className='col-6'>
+            <h4>Sentiment Z-score</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <LineChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="long_sentiment_z_index" stroke="#008080" />
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="short_sentiment_z_index" stroke="#800000" />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 0 }} />
+              </LineChart>
+            </div>
+          </div>
+          <div className='col-6'>
+            <h4>Sentiment</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <BarChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+                <Bar stackId="a" dataKey="longs" fill="#008080" />
+                <Bar stackId="b" dataKey="shorts" fill="#800000" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <CartesianGrid strokeDasharray="3 3" />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 0 }} />
+              </BarChart>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <header className='blog-header py-4'>
+        <div className='row flex-nowrap justify-content-between align-items-center'>
+          <div className='col-12'>
+            <h4>Net Positions Z-score</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <LineChart width={1080} height={400} data={netPositionsData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }} >
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="net_positions" stroke="#0000FF" />
+                <CartesianGrid stroke="#ccc" />
+                <XAxis dataKey="primary" />
+                <ReferenceLine y={50} label="EQ." stroke="red" />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 0 }} />
+              </LineChart>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <header className='blog-header py-4'>
+        <div className='row flex-nowrap justify-content-between align-items-center'>
+          <div className='col-6'>
+            <h4>AVG positions Z-score</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <LineChart width={540} height={350} data={avgPositionsData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="long_avg_z_index" stroke="#008080" />
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="short_avg_z_index" stroke="#800000" />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 0 }} />
+              </LineChart>
+            </div>
+          </div>
+          <div className='col-6'>
+            <h4>AVG positions</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <BarChart width={540} height={350} data={avgPositionsData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+                <Bar stackId="a" dataKey="longs" fill="#008080" />
+                <Bar stackId="b" dataKey="shorts" fill="#800000" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <CartesianGrid strokeDasharray="3 3" />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 0 }} />
+              </BarChart>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <header className='blog-header py-4'>
+        <div className='row flex-nowrap justify-content-between align-items-center'>
+          <div className='col-6'>
+            <h4>Change in OI STD.D Z-Score</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <LineChart width={540} height={400} data={changeInOpenInterest} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_longs_std" stroke="#008080" />
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_shorts_std" stroke="#800000" />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 0 }} />
+              </LineChart>
+            </div>
+          </div>
+          {/* <div className='col-6'> */}
+          {/*   <h4>AVG positions</h4> */}
+          {/*   <div className="container" style={{ width: '100%', height: '400px' }}> */}
+          {/*     <BarChart width={540} height={350} data={avgPositionsData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} > */}
+          {/*       <Bar stackId="a" dataKey="longs" fill="#008080" /> */}
+          {/*       <Bar stackId="b" dataKey="shorts" fill="#800000" /> */}
+          {/*       <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} /> */}
+          {/*       <CartesianGrid strokeDasharray="3 3" /> */}
+          {/*       <YAxis /> */}
+          {/*       <Tooltip /> */}
+          {/*       <Legend wrapperStyle={{ bottom: 0 }} /> */}
+          {/*     </BarChart> */}
+          {/*   </div> */}
+          {/* </div> */}
+        </div>
+      </header>
+
+    </>
   )
 }
 

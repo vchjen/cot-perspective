@@ -41,9 +41,10 @@ export const useRenderTemplate: Use<RenderTemplate> = (resolve) => {
         }}
         tableData={{
           averagePeriod,
-          values: props.marketData.map(
-            processTableData(props.selections.traderCategory),
-          ),
+          values: props.marketData
+            .map(
+              processTableData(props.selections.traderCategory),
+            ),
         }}
       />
     )

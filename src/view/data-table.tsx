@@ -48,7 +48,7 @@ const DataTable: FC<DataTableProps> = (props) => {
   const largeSpecGrossLongStats = stats(15)
   const largeSpecGrossShortStats = stats(16)
 
-  const propsMapped = props.values
+  const mappedData = props.values
     .map((x, idx) => ({
       date: x[0],
       longs: {
@@ -115,7 +115,7 @@ const DataTable: FC<DataTableProps> = (props) => {
   // eslint-disable-next-line @typescript-eslint/naming-convention
   const max_weeks_in_charts = 16
 
-  const sentimentData = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
+  const sentimentData = mappedData.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     short_sentiment_z_index: Number(p.short_sentiment_z_index),
     long_sentiment_z_index: Number(p.long_sentiment_z_index),
@@ -124,30 +124,30 @@ const DataTable: FC<DataTableProps> = (props) => {
     shorts: p.short_sentiment,
     spreads: p.spread_sentiment,
   }))
-  const netPositionsData = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
+  const netPositionsData = mappedData.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     net_positions: Number(p.net_pos_z_index),
   }))
-  const avgPositionsData = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
+  const avgPositionsData = mappedData.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     shorts: Number(p.avg_short_pos),
     longs: Number(p.avg_long_pos),
     short_avg_z_index: Math.round(100 * ((Number(p.avg_short_pos) - shortAvgPosStats.min) / (shortAvgPosStats.max - shortAvgPosStats.min))),
     long_avg_z_index: Math.round(100 * ((Number(p.avg_long_pos) - longAvgPosStats.min) / (longAvgPosStats.max - longAvgPosStats.min))),
   }))
-  const changeInOpenInterest = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
+  const changeInOpenInterest = mappedData.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     change_longs_z_index: p.change_longs_z_index,
     change_shorts_z_index: p.change_shorts_z_index,
     change_longs_std: 100 * Number(p.change_longs_std),
     change_shorts_std: 100 * Number(p.change_shorts_std),
   }))
-  const largeSpecsNetPositions = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
+  const largeSpecsNetPositions = mappedData.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     change_longs_z_index: Number(p.large_spec_net_long_z_index),
     change_shorts_z_index: Number(p.large_spec_net_short_z_index),
   }))
-  const largeSpecsGrossPositions = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
+  const largeSpecsGrossPositions = mappedData.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     change_longs_z_index: Number(p.large_spec_gross_long_z_index),
     change_shorts_z_index: Number(p.large_spec_gross_short_z_index),
@@ -188,7 +188,7 @@ const DataTable: FC<DataTableProps> = (props) => {
             <td>{netAverage}</td>
           </tr>
         )}
-        {propsMapped.map((row, rowIndex) => (
+        {mappedData.slice(0, max_weeks_in_charts).map((row, rowIndex) => (
           <tr key={rowIndex}>
             <td key="date">
               {row.date}

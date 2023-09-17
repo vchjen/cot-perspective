@@ -59,7 +59,8 @@ export const useGetData: Use<GetData> = (resolve) => {
     }
 
     console.log('• Successfully fetched data')
-    return data
+    // return data
+    return { 'COMMODITY EXCHANGE INC.': data['COMMODITY EXCHANGE INC.'] }
   }
 
   return getData

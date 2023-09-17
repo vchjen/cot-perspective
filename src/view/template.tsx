@@ -55,24 +55,9 @@ export const Template: FC<Props> = (props) => {
             <div className='row mb-2' style={{ paddingTop: 20 }}>
               <ul>
                 <UsefulLink
-                  link='https://github.com/hd-o/cotperspective'
-                  channel='Source Code'
-                  title='github.com/hd-o/cotperspective'
-                />
-                <UsefulLink
                   link='https://www.cftc.gov/MarketReports/CommitmentsofTraders/index.htm'
                   channel='CFTC'
                   title='Commitments of Traders (COT) Reports Descriptions'
-                />
-                <UsefulLink
-                  link='https://www.youtube.com/watch?v=mjaWvU6tzrM'
-                  channel='Magic Trader FX'
-                  title='CFTC COT Report Understanding the Institutions'
-                />
-                <UsefulLink
-                  link='https://www.youtube.com/watch?v=2EpSaM2H540'
-                  channel='Transparent Fx Academy'
-                  title='How To Read The COMMITMENT OF TRADERS - COT Report'
                 />
               </ul>
             </div>

@@ -19,7 +19,6 @@ export const propertiesToSelect = [
   'Total Reportable Positions-Long (All)',
   'Total Reportable Positions-Short (All)',
 
-  'Concentration-Gross LT =4 TDR-Long (All)',
   'Concentration-Gross LT =4 TDR-Short (All)',
   'Concentration-Gross LT =8 TDR-Long (All)',
   'Concentration-Gross LT =8 TDR-Short (All)',
@@ -28,13 +27,6 @@ export const propertiesToSelect = [
   'Concentration-Net LT =8 TDR-Long (All)',
   'Concentration-Net LT =8 TDR-Short (All)',
   'Concentration-Gross LT = 4 TDR-Long (All)',
-  'Concentration-Gross LT =4 TDR-Short (All)',
-  'Concentration-Gross LT =8 TDR-Long (All)',
-  'Concentration-Gross LT =8 TDR-Short (All)',
-  'Concentration-Net LT =4 TDR-Long (All)',
-  'Concentration-Net LT =4 TDR-Short (All)',
-  'Concentration-Net LT =8 TDR-Long (All)',
-  'Concentration-Net LT =8 TDR-Short (All)',
 
   'Traders-Total (All)',
   'Traders-Noncommercial-Long (All)',

@@ -10,9 +10,7 @@ import {
   Tooltip,
   Legend,
   ReferenceLine,
-  Bar,
-  Scatter,
-  ComposedChart, ScatterChart, ResponsiveContainer, ZAxis, BarChart
+  Bar, BarChart
 } from 'recharts'
 
 type TableValues = Array<(string | number)>
@@ -41,8 +39,14 @@ const DataTable: FC<DataTableProps> = (props) => {
   const netAverage = averageStats.average.toLocaleString()
   const longSentimentStats = stats(8)
   const shortSentimentStats = stats(9)
+  const spreadSentimentStats = stats(10)
   const longAvgPosStats = stats(11)
   const shortAvgPosStats = stats(12)
+
+  const largeSpecNetLongStats = stats(13)
+  const largeSpecNetShortStats = stats(14)
+  const largeSpecGrossLongStats = stats(15)
+  const largeSpecGrossShortStats = stats(16)
 
   const propsMapped = props.values
     .map((x, idx) => ({
@@ -61,18 +65,30 @@ const DataTable: FC<DataTableProps> = (props) => {
       change_longs_std: Number(x[3]) < 0
         ? (-1 * (Number(x[3]) - changeLongsStats.std_dev.mean_negative) / changeLongsStats.std_dev.std_dev_negative).toFixed(2)
         : ((Number(x[3]) - changeLongsStats.std_dev.mean_positive) / changeLongsStats.std_dev.std_dev_positive).toFixed(2),
+      change_longs_z_index: ((Number(x[3]) - changeLongsStats.min) / (changeLongsStats.max - changeLongsStats.min) * 100).toFixed(2),
       change_shorts: x[4],
       change_shorts_std: Number(x[4]) < 0
         ? (-1 * (Number(x[4]) - changeShortsStats.std_dev.mean_negative) / changeShortsStats.std_dev.std_dev_negative).toFixed(2)
         : ((Number(x[4]) - changeShortsStats.std_dev.mean_positive) / changeShortsStats.std_dev.std_dev_positive).toFixed(2),
+      change_shorts_z_index: ((Number(x[4]) - changeShortsStats.min) / (changeShortsStats.max - changeShortsStats.min) * 100).toFixed(2),
       perc_longs: x[5],
       perc_shorts: x[6],
       long_sentiment: Number(x[8]).toFixed(2),
       long_sentiment_z_index: ((Number(x[8]) - longSentimentStats.min) / (longSentimentStats.max - longSentimentStats.min) * 100).toFixed(2),
       short_sentiment: Number(x[9]).toFixed(2),
       short_sentiment_z_index: ((Number(x[9]) - shortSentimentStats.min) / (shortSentimentStats.max - shortSentimentStats.min) * 100).toFixed(2),
+      spread_sentiment: Number(x[10]).toFixed(2),
+      spread_sentiment_z_index: ((Number(x[10]) - spreadSentimentStats.min) / (spreadSentimentStats.max - spreadSentimentStats.min) * 100).toFixed(2),
       avg_long_pos: x[11],
       avg_short_pos: x[12],
+      large_spec_net_long: x[13],
+      large_spec_net_long_z_index: ((Number(x[13]) - largeSpecNetLongStats.min) / (largeSpecNetLongStats.max - largeSpecNetLongStats.min) * 100).toFixed(2),
+      large_spec_net_short: x[14],
+      large_spec_net_short_z_index: ((Number(x[14]) - largeSpecNetShortStats.min) / (largeSpecNetShortStats.max - largeSpecNetShortStats.min) * 100).toFixed(2),
+      large_spec_gross_long: x[15],
+      large_spec_gross_long_z_index: ((Number(x[15]) - largeSpecGrossLongStats.min) / (largeSpecGrossLongStats.max - largeSpecGrossLongStats.min) * 100).toFixed(2),
+      large_spec_gross_short: x[16],
+      large_spec_gross_short_z_index: ((Number(x[16]) - largeSpecGrossShortStats.min) / (largeSpecGrossShortStats.max - largeSpecGrossShortStats.min) * 100).toFixed(2),
       net_pos: {
         val: x[7],
         prev_val: props.values[idx + 1]?.[7],
@@ -96,31 +112,47 @@ const DataTable: FC<DataTableProps> = (props) => {
       return y
     })
 
-  const sentimentData = propsMapped.slice(0, 12).reverse().map((p, idx) => ({
+  // eslint-disable-next-line @typescript-eslint/naming-convention
+  const max_weeks_in_charts = 16
+
+  const sentimentData = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     short_sentiment_z_index: Number(p.short_sentiment_z_index),
     long_sentiment_z_index: Number(p.long_sentiment_z_index),
+    spreads_sentiment_z_index: Number(p.spread_sentiment_z_index),
     longs: p.long_sentiment,
     shorts: p.short_sentiment,
+    spreads: p.spread_sentiment,
   }))
-  const netPositionsData = propsMapped.slice(0, 12).reverse().map((p, idx) => ({
+  const netPositionsData = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     net_positions: Number(p.net_pos_z_index),
   }))
-  const avgPositionsData = propsMapped.slice(0, 12).reverse().map((p, idx) => ({
+  const avgPositionsData = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     shorts: Number(p.avg_short_pos),
     longs: Number(p.avg_long_pos),
     short_avg_z_index: Math.round(100 * ((Number(p.avg_short_pos) - shortAvgPosStats.min) / (shortAvgPosStats.max - shortAvgPosStats.min))),
     long_avg_z_index: Math.round(100 * ((Number(p.avg_long_pos) - longAvgPosStats.min) / (longAvgPosStats.max - longAvgPosStats.min))),
   }))
-  const changeInOpenInterest = propsMapped.slice(0, 12).reverse().map((p, idx) => ({
+  const changeInOpenInterest = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
-    longs: p.change_longs,
-    shorts: p.change_shorts,
+    change_longs_z_index: p.change_longs_z_index,
+    change_shorts_z_index: p.change_shorts_z_index,
     change_longs_std: 100 * Number(p.change_longs_std),
     change_shorts_std: 100 * Number(p.change_shorts_std),
   }))
+  const largeSpecsNetPositions = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
+    primary: String(p.date).substring(5),
+    change_longs_z_index: Number(p.large_spec_net_long_z_index),
+    change_shorts_z_index: Number(p.large_spec_net_short_z_index),
+  }))
+  const largeSpecsGrossPositions = propsMapped.slice(0, max_weeks_in_charts).reverse().map((p, idx) => ({
+    primary: String(p.date).substring(5),
+    change_longs_z_index: Number(p.large_spec_gross_long_z_index),
+    change_shorts_z_index: Number(p.large_spec_gross_short_z_index),
+  }))
+  console.debug('')
 
   return (
     <>
@@ -203,28 +235,30 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>Sentiment Z-score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+              <LineChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
                 <Line activeDot={{ r: 8 }} type="monotone" dataKey="long_sentiment_z_index" stroke="#008080" />
                 <Line activeDot={{ r: 8 }} type="monotone" dataKey="short_sentiment_z_index" stroke="#800000" />
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="spreads_sentiment_z_index" stroke="#FFA500" />
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
                 <YAxis />
                 <Tooltip />
-                <Legend wrapperStyle={{ bottom: 0 }} />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
               </LineChart>
             </div>
           </div>
           <div className='col-6'>
             <h4>Sentiment</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <BarChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+              <BarChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
                 <Bar stackId="a" dataKey="longs" fill="#008080" />
                 <Bar stackId="b" dataKey="shorts" fill="#800000" />
+                <Bar stackId="c" dataKey="spreads" fill="#FFA500" />
                 <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
                 <CartesianGrid strokeDasharray="3 3" />
                 <YAxis />
                 <Tooltip />
-                <Legend wrapperStyle={{ bottom: 0 }} />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
               </BarChart>
             </div>
           </div>
@@ -243,7 +277,7 @@ const DataTable: FC<DataTableProps> = (props) => {
                 <ReferenceLine y={50} label="EQ." stroke="red" />
                 <YAxis />
                 <Tooltip />
-                <Legend wrapperStyle={{ bottom: 0 }} />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
               </LineChart>
             </div>
           </div>
@@ -255,28 +289,28 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>AVG positions Z-score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={540} height={350} data={avgPositionsData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+              <LineChart width={540} height={350} data={avgPositionsData} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
                 <Line activeDot={{ r: 8 }} type="monotone" dataKey="long_avg_z_index" stroke="#008080" />
                 <Line activeDot={{ r: 8 }} type="monotone" dataKey="short_avg_z_index" stroke="#800000" />
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
                 <YAxis />
                 <Tooltip />
-                <Legend wrapperStyle={{ bottom: 0 }} />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
               </LineChart>
             </div>
           </div>
           <div className='col-6'>
             <h4>AVG positions</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <BarChart width={540} height={350} data={avgPositionsData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+              <BarChart width={540} height={350} data={avgPositionsData} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
                 <Bar stackId="a" dataKey="longs" fill="#008080" />
                 <Bar stackId="b" dataKey="shorts" fill="#800000" />
                 <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
                 <CartesianGrid strokeDasharray="3 3" />
                 <YAxis />
                 <Tooltip />
-                <Legend wrapperStyle={{ bottom: 0 }} />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
               </BarChart>
             </div>
           </div>
@@ -288,31 +322,64 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>Change in OI STD.D Z-Score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={540} height={400} data={changeInOpenInterest} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} >
+              <LineChart width={540} height={400} data={changeInOpenInterest} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
                 <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_longs_std" stroke="#008080" />
                 <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_shorts_std" stroke="#800000" />
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
                 <YAxis />
                 <Tooltip />
-                <Legend wrapperStyle={{ bottom: 0 }} />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
               </LineChart>
             </div>
           </div>
-          {/* <div className='col-6'> */}
-          {/*   <h4>AVG positions</h4> */}
-          {/*   <div className="container" style={{ width: '100%', height: '400px' }}> */}
-          {/*     <BarChart width={540} height={350} data={avgPositionsData} margin={{ top: 5, right: 5, bottom: 5, left: 0 }} > */}
-          {/*       <Bar stackId="a" dataKey="longs" fill="#008080" /> */}
-          {/*       <Bar stackId="b" dataKey="shorts" fill="#800000" /> */}
-          {/*       <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} /> */}
-          {/*       <CartesianGrid strokeDasharray="3 3" /> */}
-          {/*       <YAxis /> */}
-          {/*       <Tooltip /> */}
-          {/*       <Legend wrapperStyle={{ bottom: 0 }} /> */}
-          {/*     </BarChart> */}
-          {/*   </div> */}
-          {/* </div> */}
+          <div className='col-6'>
+            <h4>Change in OI Z-Score</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <LineChart width={540} height={400} data={changeInOpenInterest} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_longs_z_index" stroke="#008080" />
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_shorts_z_index" stroke="#800000" />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
+              </LineChart>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <header className='blog-header py-4'>
+        <div className='row flex-nowrap justify-content-between align-items-center'>
+          <div className='col-6'>
+            <h4>Large Specs  (LT = 4) Gross Positions Z-Score</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <LineChart width={540} height={400} data={largeSpecsGrossPositions} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_longs_z_index" stroke="#008080" />
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_shorts_z_index" stroke="#800000" />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
+              </LineChart>
+            </div>
+          </div>
+          <div className='col-6'>
+            <h4>Large Specs (LT = 4) Net Positions Z-Score</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <LineChart width={540} height={400} data={largeSpecsNetPositions} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_longs_z_index" stroke="#008080" />
+                <Line activeDot={{ r: 8 }} type="monotone" dataKey="change_shorts_z_index" stroke="#800000" />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
+              </LineChart>
+            </div>
+          </div>
         </div>
       </header>
 

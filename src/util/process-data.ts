@@ -34,7 +34,8 @@ export const useProcessData: Use<ProcessData> = () => {
 
   const processData: ProcessData = (dataCSV) => {
     const records = parse(dataCSV, { trim: true, columns: true, skip_empty_lines: true })
-    return records.reduce(reduceCSV, {})
+    const reduced = records.reduce(reduceCSV, {})
+    return reduced
   }
 
   return processData

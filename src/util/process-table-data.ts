@@ -45,6 +45,10 @@ export const useProcessTableData: Use<ProcessTableData> = () => {
       /* 10 */ spreadSentiment,
       /* 11 */ avgLongPosition,
       /* 12 */ avgShortPosition,
+      /* 13 */ values['Concentration-Net LT =4 TDR-Long (All)' as keyof CSVData],
+      /* 14 */ values['Concentration-Net LT =4 TDR-Short (All)' as keyof CSVData],
+      /* 15 */ values['Concentration-Gross LT = 4 TDR-Long (All)' as keyof CSVData],
+      /* 16 */ values['Concentration-Gross LT =4 TDR-Short (All)' as keyof CSVData],
     ]
   }
 }

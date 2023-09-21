@@ -159,7 +159,7 @@ const DataTable: FC<DataTableProps> = (props) => {
     change_longs_z_index: Number(p.large_spec_gross_long_z_index),
     change_shorts_z_index: Number(p.large_spec_gross_short_z_index),
   }))
-  const longScatterData = mappedData.slice(0, props.averagePeriod).reverse().map((p, idx) => ({
+  const longScatterData = mappedData.slice(0, props.averagePeriod).map((p, idx) => ({
     primary: String(p.date).substring(5),
     current: idx === 0 ? 'NOW' : null,
     sentiment: Math.round(Number(p.long_traders - p.short_traders)),
@@ -167,7 +167,7 @@ const DataTable: FC<DataTableProps> = (props) => {
     traders: Math.round(p.long_traders),
     oi: Math.round(p.longs_z_index),
   }))
-  const shortScatterData = mappedData.slice(0, props.averagePeriod).reverse().map((p, idx) => ({
+  const shortScatterData = mappedData.slice(0, props.averagePeriod).map((p, idx) => ({
     primary: String(p.date).substring(5),
     current: idx === 0 ? 'NOW' : null,
     sentiment: Math.round(Number(p.short_traders - p.long_traders)),

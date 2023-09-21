@@ -28,8 +28,8 @@ export const useProcessTableData: Use<ProcessTableData> = () => {
     const longSentiment = longTraders / allTraders * 100
     const shortSentiment = shortTraders / allTraders * 100
     const spreadSentiment = spreadingTraders / allTraders * 100
-    const avgLongPosition = longs / allTraders
-    const avgShortPosition = shorts / allTraders
+    const avgLongPosition = longs / longTraders
+    const avgShortPosition = shorts / shortTraders
 
     return [
       /* 0 */ values['As of Date in Form YYYY-MM-DD'],

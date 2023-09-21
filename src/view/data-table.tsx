@@ -131,11 +131,11 @@ const DataTable: FC<DataTableProps> = (props) => {
     shorts: p.short_sentiment,
     spreads: p.spread_sentiment,
   }))
-  const netPositionsData = mappedData.slice(0, props.averagePeriod).reverse().map((p, idx) => ({
+  const netPositionsData = [...mappedData].reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     net_positions: Number(p.net_pos_z_index),
   }))
-  const avgPositionsData = mappedData.slice(0, props.averagePeriod).reverse().map((p, idx) => ({
+  const avgPositionsData = [...mappedData].reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     shorts: Number(p.avg_short_pos),
     longs: Number(p.avg_long_pos),
@@ -162,7 +162,7 @@ const DataTable: FC<DataTableProps> = (props) => {
   const longScatterData = mappedData.slice(0, props.averagePeriod).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     current: idx === 0 ? 'NOW' : null,
-    sentiment: Math.round(Number(p.long_sentiment_z_index)),
+    sentiment: Math.round(Number(p.long_traders - p.short_traders)),
     avg_position: Math.round(p.long_avg_z_index),
     traders: Math.round(p.long_traders),
     oi: Math.round(p.longs_z_index),
@@ -170,7 +170,7 @@ const DataTable: FC<DataTableProps> = (props) => {
   const shortScatterData = mappedData.slice(0, props.averagePeriod).reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
     current: idx === 0 ? 'NOW' : null,
-    sentiment: Math.round(Number(p.short_sentiment_z_index)),
+    sentiment: Math.round(Number(p.short_traders - p.long_traders)),
     avg_position: Math.round(p.short_avg_z_index),
     traders: Math.round(p.short_traders),
     oi: Math.round(p.shorts_z_index),
@@ -268,7 +268,7 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>Sentiment Z-score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+              <LineChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 10, bottom: 0, left: 0 }} >
                 <Line name="Longs" activeDot={{ r: 8 }} type="monotone" dataKey="long_sentiment_z_index" stroke="#008080" />
                 <Line name="Shorts" activeDot={{ r: 8 }} type="monotone" dataKey="short_sentiment_z_index" stroke="#800000" />
                 <Line name="Spreads" activeDot={{ r: 8 }} type="monotone" dataKey="spreads_sentiment_z_index" stroke="#FFA500" />
@@ -283,7 +283,7 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>Sentiment</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <BarChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+              <BarChart width={540} height={350} data={sentimentData} margin={{ top: 5, right: 10, bottom: 0, left: 0 }} >
                 <Bar name="Longs" stackId="a" dataKey="longs" fill="#008080" />
                 <Bar name="Shorts" stackId="b" dataKey="shorts" fill="#800000" />
                 <Bar name="Spreads" stackId="c" dataKey="spreads" fill="#FFA500" />
@@ -303,9 +303,9 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-12'>
             <h4>Net Positions Z-score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={1080} height={400} data={netPositionsData} margin={{ top: 5, right: 20, bottom: 5, left: 0 }} >
+              <LineChart width={1080} height={400} data={netPositionsData} margin={{ top: 5, right: 10, bottom: 5, left: 0 }} >
                 <Line name="Net positions" activeDot={{ r: 8 }} type="monotone" dataKey="net_positions" stroke="#0000FF" />
-                <CartesianGrid stroke="#ccc" />
+                <CartesianGrid strokeDasharray="3 3" />
                 <XAxis textAnchor="end" dataKey="primary" height={50} angle={-85} />
                 <ReferenceLine y={50} stroke="red" />
                 <YAxis />
@@ -322,7 +322,7 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-12'>
             <h4>AVG positions Z-score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={1080} height={400} data={avgPositionsData} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+              <LineChart width={1080} height={400} data={[...avgPositionsData]} margin={{ top: 5, right: 10, bottom: 5, left: 0 }} >
                 <Line name="Longs" activeDot={{ r: 8 }} type="monotone" dataKey="long_avg_z_index" stroke="#008080" />
                 <Line name="Shorts" activeDot={{ r: 8 }} type="monotone" dataKey="short_avg_z_index" stroke="#800000" />
                 <CartesianGrid strokeDasharray="3 3" />
@@ -342,13 +342,14 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>X - Sentiment/Y -  OI/Size - avg position</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <ScatterChart width={540} height={350} margin={{ top: 5, right: 20, bottom: 5, left: 0 }} >
+              <ScatterChart width={540} height={350} margin={{ top: 5, right: 10, bottom: 5, left: 0 }} >
                 <CartesianGrid stroke="#ccc" />
                 <XAxis type="number" dataKey="sentiment" textAnchor="end" height={50} angle={-55}/>
                 <YAxis type="number" dataKey="oi" name="Avg" />
                 <ZAxis type="number" dataKey="avg_position" name="Sentiment" range={[0, 100]}/>
                 <Tooltip cursor={{ strokeDasharray: '3 3' }} />
                 <Legend />
+                <ReferenceLine x={0} stroke="#0000FF"/>
                 <Scatter name="Longs" data={longScatterData} fill="#008080" shape="circle">
                   <LabelList dataKey="current" />
                 </Scatter>
@@ -361,10 +362,10 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>AVG positions</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <BarChart width={540} height={350} data={avgPositionsData.slice(0, max_weeks_in_charts)}
-                        margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
-                <Bar stackId="a" name="Longs" dataKey="longs" fill="#008080" />
-                <Bar stackId="b" name="Shorts" dataKey="shorts" fill="#800000" />
+              <BarChart width={540} height={350} data={[...avgPositionsData].reverse().slice(0, max_weeks_in_charts).reverse()}
+                        margin={{ top: 5, right: 10, bottom: 0, left: 0 }} >
+                <Bar name="Longs" dataKey="longs" fill="#008080" />
+                <Bar name="Shorts" dataKey="shorts" fill="#800000" />
                 <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
                 <CartesianGrid strokeDasharray="3 3" />
                 <YAxis />
@@ -381,7 +382,7 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>Change in OI STD.D Z-Score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={540} height={400} data={changeInOpenInterest} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+              <LineChart width={540} height={400} data={changeInOpenInterest} margin={{ top: 5, right: 10, bottom: 0, left: 0 }} >
                 <Line activeDot={{ r: 8 }} type="monotone" name="Longs (stand. deviation)" dataKey="change_longs_std" stroke="#008080" />
                 <Line activeDot={{ r: 8 }} type="monotone" name="Shorts (stand. deviation)" dataKey="change_shorts_std" stroke="#800000" />
                 <CartesianGrid strokeDasharray="3 3" />
@@ -395,7 +396,7 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>Change in OI Z-Score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={540} height={400} data={changeInOpenInterest} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+              <LineChart width={540} height={400} data={changeInOpenInterest} margin={{ top: 5, right: 10, bottom: 0, left: 0 }} >
                 <Line activeDot={{ r: 8 }} type="monotone"name="Longs (1-year index)" dataKey="change_longs_z_index" stroke="#008080" />
                 <Line activeDot={{ r: 8 }} type="monotone" name="Shorts (1-year index)" dataKey="change_shorts_z_index" stroke="#800000" />
                 <CartesianGrid strokeDasharray="3 3" />
@@ -412,9 +413,10 @@ const DataTable: FC<DataTableProps> = (props) => {
       <header className='blog-header py-4'>
         <div className='row flex-nowrap justify-content-between align-items-center'>
           <div className='col-6'>
+            <h3>Non-commercials (large speculators)</h3>
             <h4>Large Specs  (LT = 4) Gross Positions Z-Score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={540} height={400} data={largeSpecsGrossPositions} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+              <LineChart width={540} height={400} data={largeSpecsGrossPositions} margin={{ top: 5, right: 10, bottom: 0, left: 0 }} >
                 <Line activeDot={{ r: 8 }} type="monotone" name="Whales Gross longs (1-year index)" dataKey="change_longs_z_index" stroke="#008080" />
                 <Line activeDot={{ r: 8 }} type="monotone" name="Whales Gross shorts (1-year index)" dataKey="change_shorts_z_index" stroke="#800000" />
                 <CartesianGrid strokeDasharray="3 3" />
@@ -428,7 +430,7 @@ const DataTable: FC<DataTableProps> = (props) => {
           <div className='col-6'>
             <h4>Large Specs (LT = 4) Net Positions Z-Score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
-              <LineChart width={540} height={400} data={largeSpecsNetPositions} margin={{ top: 5, right: 0, bottom: 0, left: 0 }} >
+              <LineChart width={540} height={400} data={largeSpecsNetPositions} margin={{ top: 5, right: 10, bottom: 0, left: 0 }} >
                 <Line activeDot={{ r: 8 }} type="monotone" name="Whales Net longs (1-year index)" dataKey="change_longs_z_index" stroke="#008080" />
                 <Line activeDot={{ r: 8 }} type="monotone" name="Whales Net shorts (1-year index)" dataKey="change_shorts_z_index" stroke="#800000" />
                 <CartesianGrid strokeDasharray="3 3" />

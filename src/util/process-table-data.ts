@@ -15,9 +15,11 @@ export const useProcessTableData: Use<ProcessTableData> = () => {
     if (selectedTraderCategory === 'Commercial' && values.market === 'GOLD') {
       console.clear()
     }
-    const isCommercial = selectedTraderCategory === 'Commercial'
+    // const isCommercial = selectedTraderCategory === 'Commercial'
     const longs = Number(values[`${selectedTraderCategory} Positions-Long (All)` as keyof CSVData])
     const shorts = Number(values[`${selectedTraderCategory} Positions-Short (All)` as keyof CSVData])
+    const spreads = Number(values[`${selectedTraderCategory} Positions-Spreading (All)` as keyof CSVData])
+    const totalOpenInterest = Number(values['Open Interest (All)' as keyof CSVData])
     const netPositions = longs - shorts
     const spreadingTraders = selectedTraderCategory === 'Commercial'
       ? 0
@@ -31,6 +33,11 @@ export const useProcessTableData: Use<ProcessTableData> = () => {
     const avgLongPosition = longs / longTraders
     const avgShortPosition = shorts / shortTraders
     const netSentiment = longTraders - shortTraders
+
+    const longConviction = Number(Number(longs / totalOpenInterest).toFixed(2))
+    const shortConviction = Number(Number(shorts / totalOpenInterest).toFixed(2))
+    const spreadConviction = Number(Number(spreads / totalOpenInterest).toFixed(2))
+    const netConviction = Number(((longs - shorts) / totalOpenInterest).toFixed(2))
 
     return [
       /* 0 */ values['As of Date in Form YYYY-MM-DD'],
@@ -54,6 +61,10 @@ export const useProcessTableData: Use<ProcessTableData> = () => {
       /* 18 */ shortTraders,
       /* 19 */ spreadingTraders,
       /* 20 */ netSentiment,
+      /* 21 */ longConviction,
+      /* 22 */ shortConviction,
+      /* 23 */ spreadConviction,
+      /* 24 */ netConviction,
     ]
   }
 }

@@ -40,6 +40,10 @@ const DataTable: FC<DataTableProps> = (props) => {
   const spreadSentimentStats = stats(10)
   const longAvgPosStats = stats(11)
   const shortAvgPosStats = stats(12)
+  const longConvictionStats = stats(21)
+  const shortConvictionStats = stats(22)
+  const spreadConvictionStats = stats(23)
+  const netConvictionStats = stats(24)
 
   const largeSpecNetLongStats = stats(13)
   const largeSpecNetShortStats = stats(14)
@@ -102,6 +106,13 @@ const DataTable: FC<DataTableProps> = (props) => {
       net_sentiment_z_index: ((Number(x[20]) - netSentimentStats.min) / (netSentimentStats.max - netSentimentStats.min) * 100).toFixed(2),
       long_traders: Number(x[17]),
       short_traders: Number(x[18]),
+      long_conviction: Number(Number(x[21]).toFixed(2)),
+      long_conviction_z_index: ((Number(x[21]) - longConvictionStats.min) / (longConvictionStats.max - longConvictionStats.min) * 100).toFixed(2),
+      short_conviction: Number(Number(x[22]).toFixed(2)),
+      short_conviction_z_index: ((Number(x[22]) - shortConvictionStats.min) / (shortConvictionStats.max - shortConvictionStats.min) * 100).toFixed(2),
+      spread_conviction: Number(Number(x[23]).toFixed(2)),
+      spread_conviction_z_index: ((Number(x[23]) - spreadConvictionStats.min) / (spreadConvictionStats.max - spreadConvictionStats.min) * 100).toFixed(2),
+      net_conviction_z_index: ((Number(x[24]) - netConvictionStats.min) / (netConvictionStats.max - netConvictionStats.min) * 100).toFixed(2),
     }))
     .map(y => {
       if (y.longs.prev_val !== undefined) {
@@ -131,6 +142,16 @@ const DataTable: FC<DataTableProps> = (props) => {
     shorts: p.short_sentiment,
     spreads: p.spread_sentiment,
     net_sentiment: Number(p.net_sentiment_z_index),
+  }))
+  const convictionData = [...mappedData].reverse().map((p, idx) => ({
+    primary: String(p.date).substring(5),
+    short_conviction_z_index: Number(p.short_conviction_z_index),
+    long_conviction_z_index: Number(p.long_conviction_z_index),
+    spreads_conviction_z_index: Number(p.spread_conviction_z_index),
+    longs: p.long_conviction,
+    shorts: p.short_conviction,
+    spreads: p.spread_conviction,
+    net_conviction: Number(p.net_conviction_z_index),
   }))
   const netPositionsData = [...mappedData].reverse().map((p, idx) => ({
     primary: String(p.date).substring(5),
@@ -334,6 +355,64 @@ const DataTable: FC<DataTableProps> = (props) => {
                 <Tooltip />
                 <Legend wrapperStyle={{ bottom: 'auto' }} />
               </LineChart>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <header className='blog-header py-4'>
+        <div className='row flex-nowrap justify-content-between align-items-center'>
+          <div className='col-12'>
+            <h4>Net Sentiment Z-score</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <LineChart width={1080} height={400} data={convictionData} margin={{ top: 5, right: 10, bottom: 5, left: 0 }} >
+                <Line name="Net sentiment" activeDot={{ r: 8 }} type="monotone" dataKey="net_conviction" stroke="#0000FF" />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-85} />
+                <ReferenceLine y={50} stroke="red" />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
+              </LineChart>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <header className='blog-header py-4'>
+        <div className='row flex-nowrap justify-content-between align-items-center'>
+          <div className='col-6'>
+            <h4>Conviction Z-score</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <LineChart width={540} height={350} data={
+                [...convictionData].reverse().slice(0, max_weeks_in_charts).reverse()
+              } margin={{ top: 5, right: 10, bottom: 0, left: 0 }} >
+                <Line name="Longs" activeDot={{ r: 8 }} type="monotone" dataKey="long_conviction_z_index" stroke="#008080" />
+                <Line name="Shorts" activeDot={{ r: 8 }} type="monotone" dataKey="short_conviction_z_index" stroke="#800000" />
+                <Line name="Spreads" activeDot={{ r: 8 }} type="monotone" dataKey="spreads_conviction_z_index" stroke="#FFA500" />
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <YAxis />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
+              </LineChart>
+            </div>
+          </div>
+          <div className='col-6'>
+            <h4>Conviction</h4>
+            <div className="container" style={{ width: '100%', height: '400px' }}>
+              <BarChart width={540} height={350} data={
+                [...convictionData].reverse().slice(0, max_weeks_in_charts).reverse()
+              } margin={{ top: 5, right: 10, bottom: 0, left: 0 }} >
+                <Bar name="Longs" stackId="a" dataKey="longs" fill="#008080" />
+                <Bar name="Shorts" stackId="b" dataKey="shorts" fill="#800000" />
+                {/* <Bar name="Spreads" stackId="c" dataKey="spreads" fill="#FFA500" /> */}
+                <XAxis textAnchor="end" dataKey="primary" height={50} angle={-55} />
+                <CartesianGrid strokeDasharray="3 3" />
+                <YAxis allowDecimals={true} />
+                <Tooltip />
+                <Legend wrapperStyle={{ bottom: 'auto' }} />
+              </BarChart>
             </div>
           </div>
         </div>

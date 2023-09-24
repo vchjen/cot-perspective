@@ -1,11 +1,11 @@
 # 📅 COT Perspective
 
-[![Netlify Status](https://api.netlify.com/api/v1/badges/b4a03d51-90a1-4789-b88b-4c49dad945db/deploy-status)](https://app.netlify.com/sites/cotperspective/deploys)
+[![Netlify Status]([![Netlify Status](https://api.netlify.com/api/v1/badges/fea91792-b359-479d-9904-dd4e995a0ac2/deploy-status)](https://app.netlify.com/sites/cot-charts/deploys))
 
 A pleasant way to view [COT][cot] data
 
 - Site is statically rendered
-- Live at [cotperspective.com](https://cotperspective.com/)
+- Live at [cotperspective.com](https://cot.protradersclub.uz/)
 - Push to master automatically starts [Netlify deploy][netlify_deploy]
 - See [package.json][package] for available dev commands
 

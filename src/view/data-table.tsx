@@ -363,7 +363,7 @@ const DataTable: FC<DataTableProps> = (props) => {
       <header className='blog-header py-4'>
         <div className='row flex-nowrap justify-content-between align-items-center'>
           <div className='col-12'>
-            <h4>Net Sentiment Z-score</h4>
+            <h4>Net Conviction Z-score</h4>
             <div className="container" style={{ width: '100%', height: '400px' }}>
               <LineChart width={1080} height={400} data={convictionData} margin={{ top: 5, right: 10, bottom: 5, left: 0 }} >
                 <Line name="Net sentiment" activeDot={{ r: 8 }} type="monotone" dataKey="net_conviction" stroke="#0000FF" />

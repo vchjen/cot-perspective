@@ -5,7 +5,7 @@
 A pleasant way to view [COT][cot] data
 
 - Site is statically rendered
-- Live at [cotperspective.com](https://cot.protradersclub.uz/)
+- Live at [cot.protradersclub.uz](https://cot.protradersclub.uz/)
 - Push to master automatically starts [Netlify deploy][netlify_deploy]
 - See [package.json][package] for available dev commands
 
@@ -16,4 +16,4 @@ A pleasant way to view [COT][cot] data
 
 ## License
 
-[![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhd-o%2Fcotperspective.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhd-o%2Fcotperspective?ref=badge_large)
+## [![FOSSA Status](https://app.fossa.com/api/projects/git%2Bgithub.com%2Fhd-o%2Fcotperspective.svg?type=large)](https://app.fossa.com/projects/git%2Bgithub.com%2Fhd-o%2Fcotperspective?ref=badge_large)

@@ -26,7 +26,7 @@ export const Template: FC<Props> = (props) => {
           <link rel="icon" href="favicon.ico" type="image/x-icon" />
           <title>COT Perspective • Delightful COT Reports</title>
           <meta name='description' content='Delightful COT Reports' />
-          <meta name='author' content='Hadrian de Oliveira' />
+          <meta name='author' content='GeneralGrievous322' />
           <meta property="og:type" content="website" />
           <meta property="og:site_name" content="COT Perspective" />
           <meta property="og:title" content="COT Perspective • Delightful COT Reports" />

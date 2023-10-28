@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "src/index.tsx",
   "repository": "https://github.com/hd-o/cotperspective.git",
-  "author": "Hadrian de Oliveira",
+  "author": "GeneralGrievous322",
   "license": "MIT",
   "scripts": {
     "dev": "concurrently yarn:dev:build yarn:start",

@@ -13,8 +13,9 @@ type ProcessTableData =
 export const useProcessTableData: Use<ProcessTableData> = () => {
   return (selectedTraderCategory) => (values) => {
     if (selectedTraderCategory === 'Commercial' && values.market === 'GOLD') {
-      console.clear()
+      console.log('GOLD / COMMERCIAL')
     }
+
     // const isCommercial = selectedTraderCategory === 'Commercial'
     const longs = Number(values[`${selectedTraderCategory} Positions-Long (All)` as keyof CSVData])
     const shorts = Number(values[`${selectedTraderCategory} Positions-Short (All)` as keyof CSVData])

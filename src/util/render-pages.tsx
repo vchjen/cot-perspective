@@ -12,7 +12,7 @@ export const useRenderPages: Use<RenderPages> = (resolve) => {
 
   return async (getData) => {
     const data = await getData({
-      year: new Date().getFullYear(),
+      year: 2023,
       minimumEntries: averagePeriod,
     })
     const exchanges = getSortedKeys(data)
